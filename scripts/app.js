@@ -15,21 +15,52 @@ class Player {
 	/**
 	 * @param {number} x
 	 * @param {number} y
-	 * @param {CanvasRenderingContext2D} ctx 
+	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {game} game
 	 */
-	constructor(x, y, ctx) {
+	constructor(x, y, ctx, game) {
 		this.x = x;
 		this.y = y;
-		this.w = game.gridSize;
-		this.h = this.w;
-		this.ctx =ctx 
-		this.segments = [ new Segment(5* game.gridSize, 5 * game.gridSize, "yellow", this.ctx)];
+		this.game = game;
+		
+		this.ctx = ctx;
+		this.currentDirection = "down";
+		this.head = new Segment(this.x, this.y, "Purple", this.ctx);
+		this.segments = [];
+
+		this.LastUpdate = 0;
+	}
+	/**
+	 * @param {number} elapsedTime 
+	 */
+	update(elapsedTime) {
+		this.LastUpdate += elapsedTime;
+		if(this.LastUpdate < this.game.refreshRate) return;
+
+		this.LastUpdate = 0;
+
+		switch(this.currentDirection){
+			case "down" :
+				this.head.y += this.game.gridsize;
+				break;
+			case "up" :
+				this.head.y -= this.game.gridsize;
+				break;
+			case "right" :
+				this.head.x += this.game.gridsize;
+				break;
+			case "left" :
+				this.head.y -= this.game.gridsize;
+				break;
 			
+		}
 	}
 
-	update(){} 
 	draw() {
-		this.segments.forEach 
+		this.head.draw();
+		this.segments.forEach((s) => {
+			s.draw();
+		});
 	}
 }
 
@@ -46,28 +77,34 @@ class Segment {
 		this.w = game.gridSize;
 		this.h = this.w;
 		this.color = color;
-		this.ctx = ctx; 
+		this.ctx = ctx;
 	}
 
 	update() {}
 
-	draw(){
+	draw() {
 		this.ctx.fillStyle = this.color;
 		this.ctx.fillRect(this.x, this.y, this.w, this.h);
-	} 
+	}
 }
 
-let p1 = new Player 
+let p1 = new Player(
+    5 * game.gridSize,
+    5 * game.gridSize,
+	ctx,
+     game);
 
+let currentTime = 0;
 
-let currentTime = 0; 
-
-function gameloop(timestamp){
-	let elespsedTime = timestamp - currentTime;
+function gameLoop(timestamp) {
+	let elapsedTime = timestamp - currentTime;
 	currentTime = timestamp;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	requestAnimationFrame(gameloop);
+	p1.update(elapsedTime);
+	p1.draw();
+
+	requestAnimationFrame(gameLoop);
 }
 
-requestAnimationFrame(gameloop);
+requestAnimationFrame(gameLoop);
