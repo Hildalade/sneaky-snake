@@ -17,7 +17,7 @@ class Player {
 	 * @param {number} y
 	 * @param {CanvasRenderingContext2D} ctx 
 	 */
-	constructor(x, y) {
+	constructor(x, y, ctx) {
 		this.x = x;
 		this.y = y;
 		this.w = game.gridSize;
@@ -29,7 +29,7 @@ class Player {
 
 	update(){} 
 	draw() {
-		this.segments.foreach 
+		this.segments.forEach 
 	}
 }
 
