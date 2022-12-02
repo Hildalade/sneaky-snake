@@ -22,37 +22,37 @@ class Player {
 		this.x = x;
 		this.y = y;
 		this.game = game;
-		
 		this.ctx = ctx;
-		this.currentDirection = "down";
-		this.head = new Segment(this.x, this.y, "Purple", this.ctx);
+
+		this.currentDirection = "right";
+		this.head = new Segment(this.x, this.y, "green", this.ctx);
 		this.segments = [];
 
-		this.LastUpdate = 0;
+		this.lastUpdate = 0;
 	}
+
 	/**
-	 * @param {number} elapsedTime 
+	 * @param {number} elapsedTime
 	 */
 	update(elapsedTime) {
-		this.LastUpdate += elapsedTime;
-		if(this.LastUpdate < this.game.refreshRate) return;
+		this.lastUpdate += elapsedTime;
+		if (this.lastUpdate < this.game.refreshRate) return;
 
-		this.LastUpdate = 0;
+		this.lastUpdate = 0;
 
-		switch(this.currentDirection){
-			case "down" :
-				this.head.y += this.game.gridsize;
+		switch (this.currentDirection) {
+			case "down":
+				this.head.y += this.game.gridSize;
 				break;
-			case "up" :
-				this.head.y -= this.game.gridsize;
+			case "up":
+				this.head.y -= this.game.gridSize;
 				break;
-			case "right" :
-				this.head.x += this.game.gridsize;
+			case "right":
+				this.head.x += this.game.gridSize;
 				break;
-			case "left" :
-				this.head.y -= this.game.gridsize;
+			case "left":
+				this.head.x -= this.game.gridSize;
 				break;
-			
 		}
 	}
 
@@ -88,11 +88,7 @@ class Segment {
 	}
 }
 
-let p1 = new Player(
-    5 * game.gridSize,
-    5 * game.gridSize,
-	ctx,
-     game);
+let p1 = new Player(5 * game.gridSize, 5 * game.gridSize, ctx, game);
 
 let currentTime = 0;
 
