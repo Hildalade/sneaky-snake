@@ -31,7 +31,7 @@ class Player {
 		this.ctx = ctx;
 
 		this.currentDirection = "MOVE_DOWN";
-		this.head = new Segment(this.x, this.y, "teal", this.ctx);
+		this.head = new Segment(this.x, this.y, "purple", this.ctx);
 		this.segments = [];
 
 		this.lastUpdate = 0;
