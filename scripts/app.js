@@ -11,7 +11,6 @@ const MOVE_DOWN ="down";
 const MOVE_LEFT ="left";
 const MOVE_RIGHT ="right";
 
-
 let game = {
 	gridSize: 20,
 	refreshRate: 500, // milliseconds
@@ -117,7 +116,31 @@ class Segment {
 	}
 }
 
+class Food {
+	/**
+	 * @param {CanvasRenderingContext2D} ctx 
+	 */
+	constructor(ctx){
+		this.ctx = ctx;
+		this.x = 0;
+		this.y = 0;
+		this.radius = game.gridsize / 2;
+		this.color = "red";
+		this.gorwBy = 1;
+		this.isEaten = false; 
+	}
+
+	update(){}
+	draw(){
+		this.ctx.beginPath();
+		this.ctx.fillStyle = this.color;
+		this.ctx.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, Math.PI * 2);
+		this.ctx.closePath();
+	}
+}
+
 let p1 = new Player(5 * game.gridSize, 5 * game.gridSize, ctx, game);
+let f1= new Food(ctx);
 
 let currentTime = 0;
 
@@ -129,6 +152,7 @@ function gameLoop(timestamp) {
 	p1.update(elapsedTime);
 	p1.draw();
 
+	f1.draw;
 	requestAnimationFrame(gameLoop);
 }
 
