@@ -124,6 +124,7 @@ class Food {
 		this.ctx = ctx;
 		this.x = 0;
 		this.y = 0;
+		this.size = 0;
 		this.radius = game.gridsize / 2;
 		this.color = "red";
 		this.gorwBy = 1;
@@ -134,7 +135,8 @@ class Food {
 	draw(){
 		this.ctx.beginPath();
 		this.ctx.fillStyle = this.color;
-		this.ctx.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, Math.PI * 2);
+		this.ctx.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, Math.PI*2);
+		this.ctx.fill();
 		this.ctx.closePath();
 	}
 }
