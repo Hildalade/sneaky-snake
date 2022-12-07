@@ -124,26 +124,63 @@ class Food {
 		this.ctx = ctx;
 		this.x = 0;
 		this.y = 0;
-		this.size = 0;
-		this.radius = game.gridsize / 2;
+		this.radius = game.gridSize / 2;
 		this.color = "red";
 		this.gorwBy = 1;
 		this.isEaten = false; 
 	}
-
+	spawn(){
+		this.isEaten = false;
+		let foodType = Math.floor(Math.random()* 3 + 1);
+		switch(foodType){
+			case 1:
+				this.color = "red";
+				this.gorwBy = 1;
+				break;
+			case 2:
+				this.color = "blue";
+				this.gorwBy = 2;
+				break;
+			case 3:
+				this.color = "gold";
+				this.gorwBy = 3;
+				break;
+			}
+		let xGridMaxValue = canvas.width / game.gridSize; 
+		let yGridMaxValue = canvas.height / game.gridSize; 
+		let randomx = Math.floor(Math.random() * xGridMaxValue);
+		let randomy = Math.floor(Math.random() * yGridMaxValue)
+		this.x = randomx * game.gridSize;
+		this.y = randomy * game.gridSize;
+	}
 	update(){}
 	draw(){
-		this.ctx.beginPath();
+		if(this.isEaten) return;
+		this.ctx.beginPath()
 		this.ctx.fillStyle = this.color;
-		this.ctx.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, Math.PI*2);
+		this.ctx.arc(
+			this.x + this.radius, 
+			this.y + this.radius, 
+			this.radius,
+			 0,
+			Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
 }
 
 let p1 = new Player(5 * game.gridSize, 5 * game.gridSize, ctx, game);
-let f1= new Food(ctx);
-
+let food =[
+	new Food(ctx),
+	new Food(ctx),
+	new Food(ctx),
+	new Food(ctx)
+]
+food.forEach((f) => {
+	f.spawn()
+})
+//let f1= new Food(ctx);
+//f1.spawn();
 let currentTime = 0;
 
 function gameLoop(timestamp) {
@@ -153,8 +190,9 @@ function gameLoop(timestamp) {
 
 	p1.update(elapsedTime);
 	p1.draw();
-
-	f1.draw;
+	food.forEach((f) => {
+		f.draw()
+	})
 	requestAnimationFrame(gameLoop);
 }
 
