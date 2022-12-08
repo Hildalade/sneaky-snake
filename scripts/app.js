@@ -15,7 +15,6 @@ let game = {
 	gridSize: 20,
 	refreshRate: 500, // milliseconds
 };
-
 class Player {
 	/**
 	 * @param {number} x
@@ -32,7 +31,7 @@ class Player {
 		this.currentDirection = "MOVE_DOWN";
 		this.head = new Segment(this.x, this.y, "purple", this.ctx);
 		this.segments = [];
-
+		this.
 		this.lastUpdate = 0;
 		this.wireUpEvents();
 	}
@@ -90,8 +89,12 @@ class Player {
 			}
 		});
 	}
+	grow(gorwBy){
+		for(let i = 0; i < gorwBy; i ++){
+			this.segments.push(new Segment(this.x, this.y, "red", this.ctx));
+		}
+	}
 }
-
 class Segment {
 	/**
 	 * @param {number} x
@@ -115,7 +118,6 @@ class Segment {
 		this.ctx.fillRect(this.x, this.y, this.w, this.h);
 	}
 }
-
 class Food {
 	/**
 	 * @param {CanvasRenderingContext2D} ctx 
@@ -127,7 +129,7 @@ class Food {
 		this.radius = game.gridSize / 2;
 		this.color = "red";
 		this.gorwBy = 1;
-		this.isEaten = false; 
+		this.isEaten = true; 
 	}
 	spawn(){
 		this.isEaten = false;
@@ -170,19 +172,29 @@ class Food {
 }
 
 let p1 = new Player(5 * game.gridSize, 5 * game.gridSize, ctx, game);
-let food =[
-	new Food(ctx),
-	new Food(ctx),
-	new Food(ctx),
-	new Food(ctx)
-]
-food.forEach((f) => {
-	f.spawn()
-})
+let food =[new Food(ctx),new Food(ctx),new Food(ctx),new Food(ctx)]
+
+/**
+ * @param {Array<Player>} players
+ * @param {Array<Food>} food
+ */
+function CheckIfFoodIsComsumend(players, food){
+	food.forEach((f) =>{
+		players.forEach((p) => {
+			if(p.x == f.x && p.y == f.y){
+				f.isEaten = true;
+			}
+		});
+	});
+}
+
 //let f1= new Food(ctx);
 //f1.spawn();
 let currentTime = 0;
 
+/**
+ * @param {number} timestamp
+ */
 function gameLoop(timestamp) {
 	let elapsedTime = timestamp - currentTime;
 	currentTime = timestamp;
@@ -192,6 +204,9 @@ function gameLoop(timestamp) {
 	p1.draw();
 	food.forEach((f) => {
 		f.draw()
+	})
+	food.filter((f) => f.isEaten).forEach((f) => {
+		f.spawn()
 	})
 	requestAnimationFrame(gameLoop);
 }
