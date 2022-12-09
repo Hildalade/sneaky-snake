@@ -13,7 +13,7 @@ const MOVE_RIGHT ="right";
 
 let game = {
 	gridSize: 20,
-	refreshRate: 500, // milliseconds
+	refreshRate: 200, // milliseconds
 };
 class Player {
 	/**
@@ -30,8 +30,9 @@ class Player {
 
 		this.currentDirection = "MOVE_DOWN";
 		this.head = new Segment(this.x, this.y, "purple", this.ctx);
+		/** @type {Array<Segment>} */
 		this.segments = [];
-		this.
+		this.sneakCount = 0;
 		this.lastUpdate = 0;
 		this.wireUpEvents();
 	}
@@ -42,9 +43,18 @@ class Player {
 	update(elapsedTime) {
 		this.lastUpdate += elapsedTime;
 		if (this.lastUpdate < this.game.refreshRate) return;
-
 		this.lastUpdate = 0;
 
+		for(let i = this.segments.length - 1; i >= 1; i--){
+			this.segments[i].x = this.segments[i -1].x;
+			this.segments[i].y = this.segments[i -1].y;
+		}
+
+		if(this.segments.length > 0){
+			this.segments[0].x = this.head.x;
+			this.segments[0].y = this.head.y;
+		}
+		
 		switch (this.currentDirection) {
 			case "MOVE_DOWN":
 				this.head.y += this.game.gridSize;
@@ -91,8 +101,9 @@ class Player {
 	}
 	grow(gorwBy){
 		for(let i = 0; i < gorwBy; i ++){
-			this.segments.push(new Segment(this.x, this.y, "red", this.ctx));
+			this.segments.push(new Segment(this.head.x, this.head.y, "red", this.ctx));
 		}
+		this.sneakCount++;
 	}
 }
 class Segment {
@@ -141,11 +152,11 @@ class Food {
 				break;
 			case 2:
 				this.color = "blue";
-				this.gorwBy = 2;
+				this.gorwBy = 3;
 				break;
 			case 3:
 				this.color = "gold";
-				this.gorwBy = 3;
+				this.gorwBy = 5;
 				break;
 			}
 		let xGridMaxValue = canvas.width / game.gridSize; 
@@ -181,8 +192,9 @@ let food =[new Food(ctx),new Food(ctx),new Food(ctx),new Food(ctx)]
 function CheckIfFoodIsComsumend(players, food){
 	food.forEach((f) =>{
 		players.forEach((p) => {
-			if(p.x == f.x && p.y == f.y){
+			if(p.head.x == f.x && p.head.y == f.y){
 				f.isEaten = true;
+				p.grow(f.gorwBy);
 			}
 		});
 	});
@@ -204,7 +216,8 @@ function gameLoop(timestamp) {
 	p1.draw();
 	food.forEach((f) => {
 		f.draw()
-	})
+	});
+	CheckIfFoodIsComsumend([p1], food);
 	food.filter((f) => f.isEaten).forEach((f) => {
 		f.spawn()
 	})
