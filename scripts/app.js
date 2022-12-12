@@ -160,15 +160,15 @@ class Food {
 		switch(foodType){
 			case 1:
 				this.color = "red";
-				this.gorwBy = 1;
+				this.gorwBy = 100;
 				break;
 			case 2:
 				this.color = "blue";
-				this.gorwBy = 2;
+				this.gorwBy = 200;
 				break;
 			case 3:
 				this.color = "gold";
-				this.gorwBy = 3;
+				this.gorwBy = 300;
 				break;
 			}
 		let xGridMaxValue = canvas.width / game.gridSize; 
