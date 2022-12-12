@@ -33,6 +33,7 @@ class Player {
 		/** @type {Array<Segment>} */
 		this.segments = [];
 		this.sneakCount = 0;
+		this.isDead = false;
 		this.lastUpdate = 0;
 		this.wireUpEvents();
 	}
@@ -69,9 +70,20 @@ class Player {
 				this.head.x -= this.game.gridSize;
 				break;
 		}
+
+		//check for DEATH
+		if(this.head.x < 0 ||
+			 this.head.y < 0 ||
+			  this.head.x >= canvas.width 
+			  || this.head.y >= canvas.height ||
+			  this.segments.some((s) => s.x == this.head.x && s.y == this.head.y)){
+				this.isDead = true;
+			  }
+
 	}
 
 	draw() {
+		//if (this.isDead) return;
 		this.head.draw();
 		this.segments.forEach((s) => {
 			s.draw();
@@ -152,11 +164,11 @@ class Food {
 				break;
 			case 2:
 				this.color = "blue";
-				this.gorwBy = 3;
+				this.gorwBy = 2;
 				break;
 			case 3:
 				this.color = "gold";
-				this.gorwBy = 5;
+				this.gorwBy = 3;
 				break;
 			}
 		let xGridMaxValue = canvas.width / game.gridSize; 
@@ -220,7 +232,12 @@ function gameLoop(timestamp) {
 	CheckIfFoodIsComsumend([p1], food);
 	food.filter((f) => f.isEaten).forEach((f) => {
 		f.spawn()
-	})
+	});
+
+	let isGameOver = [p1].some((p) => p.isDead);
+	if (isGameOver){
+		return
+	}
 	requestAnimationFrame(gameLoop);
 }
 
