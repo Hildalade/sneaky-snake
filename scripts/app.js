@@ -29,6 +29,7 @@ class Player {
 		this.ctx = ctx;
 
 		this.currentDirection = "MOVE_DOWN";
+		this.requestedDirection = "MOVE_DOWN";
 		this.head = new Segment(this.x, this.y, "purple", this.ctx);
 		/** @type {Array<Segment>} */
 		this.segments = [];
@@ -38,6 +39,17 @@ class Player {
 		this.wireUpEvents();
 	}
 
+	isReverseMove(){
+		if(this.requestedDirection == MOVE_RIGHT && this.currentDirection == MOVE_LEFT)
+		return true;
+		if(this.requestedDirection == MOVE_LEFT && this.currentDirection == MOVE_RIGHT)
+		return true;
+		if(this.requestedDirection == MOVE_DOWN && this.currentDirection == MOVE_UP)
+		return true;
+		if(this.requestedDirection == MOVE_UP && this.currentDirection == MOVE_DOWN)
+		return true;
+		 return false;
+	}
 	/**
 	 * @param {number} elapsedTime
 	 */
@@ -45,6 +57,22 @@ class Player {
 		this.lastUpdate += elapsedTime;
 		if (this.lastUpdate < this.game.refreshRate) return;
 		this.lastUpdate = 0;
+
+		if(this.isReverseMove()){
+			if(this.sneakCount > 0){
+				this.sneakCount--;
+
+				let reversSegments = [];
+
+				for(let i = this.segments.length -1; i == 0 ; i --){
+					reversSegments.push(this.segments[i]);
+				}
+				this.segments = reversSegments;
+			}
+		} else{
+			this.currentDirection = this.requestedDirection;
+		}
+	
 
 		for(let i = this.segments.length - 1; i >= 1; i--){
 			this.segments[i].x = this.segments[i -1].x;
@@ -93,19 +121,18 @@ class Player {
 	wireUpEvents(){
 		document.addEventListener("keydown", (e) =>{
 			//console.log(e.code);
-
 			switch(e.code){
 				case "ArrowUp":
-					this.currentDirection = "MOVE_UP";
+					this.requestedDirection = "MOVE_UP";
 					break;
 				case "ArrowDown":
-					this.currentDirection = "MOVE_DOWN";
+					this.requestedDirection = "MOVE_DOWN";
 					break;
 				case "ArrowLeft":
-					this.currentDirection = "MOVE_LEFT";
+					this.requestedDirection = "MOVE_LEFT";
 					break;
 				case "ArrowRight":
-					this.currentDirection = "MOVE_RIGHT";
+					this.requestedDirection = "MOVE_RIGHT";
 					break;
 				
 			}
@@ -160,15 +187,15 @@ class Food {
 		switch(foodType){
 			case 1:
 				this.color = "red";
-				this.gorwBy = 100;
+				this.gorwBy = 1;
 				break;
 			case 2:
 				this.color = "blue";
-				this.gorwBy = 200;
+				this.gorwBy = 2;
 				break;
 			case 3:
 				this.color = "gold";
-				this.gorwBy = 300;
+				this.gorwBy = 3;
 				break;
 			}
 		let xGridMaxValue = canvas.width / game.gridSize; 
