@@ -13,7 +13,7 @@ const MOVE_RIGHT ="right";
 
 let game = {
 	gridSize: 20,
-	refreshRate: 200, // milliseconds
+	refreshRate: 100, // milliseconds
 };
 class Player {
 	/**
@@ -28,8 +28,8 @@ class Player {
 		this.game = game;
 		this.ctx = ctx;
 
-		this.currentDirection = "MOVE_DOWN";
 		this.requestedDirection = "MOVE_DOWN";
+		this.currentDirection = "MOVE_UP";
 		this.head = new Segment(this.x, this.y, "purple", this.ctx);
 		/** @type {Array<Segment>} */
 		this.segments = [];
@@ -48,7 +48,8 @@ class Player {
 		return true;
 		if(this.requestedDirection == MOVE_UP && this.currentDirection == MOVE_DOWN)
 		return true;
-		 return false;
+		 
+		return false;
 	}
 	/**
 	 * @param {number} elapsedTime
@@ -60,14 +61,19 @@ class Player {
 
 		if(this.isReverseMove()){
 			if(this.sneakCount > 0){
+				this.currentDirection = this.requestedDirection;
 				this.sneakCount--;
+				let headX = this.head.x;
+				let headY = this.head.y;
+				
+				/** @type {Segment} */ //@ts-ignore
+				let tail = this.segments.pop();
+				this.segments = this.segments.reverse();
 
-				let reversSegments = [];
-
-				for(let i = this.segments.length -1; i == 0 ; i --){
-					reversSegments.push(this.segments[i]);
-				}
-				this.segments = reversSegments;
+				this.head.x = tail.x;
+				this.head.y = tail.y;
+				tail.x = headX;
+				tail.y = headY;
 			}
 		} else{
 			this.currentDirection = this.requestedDirection;
@@ -140,7 +146,7 @@ class Player {
 	}
 	grow(gorwBy){
 		for(let i = 0; i < gorwBy; i ++){
-			this.segments.push(new Segment(this.head.x, this.head.y, "red", this.ctx));
+			this.segments.push(new Segment(this.head.x, this.head.y, "white", this.ctx,));
 		}
 		this.sneakCount++;
 	}
@@ -186,15 +192,15 @@ class Food {
 		let foodType = Math.floor(Math.random()* 3 + 1);
 		switch(foodType){
 			case 1:
-				this.color = "red";
+				this.color = "white";
 				this.gorwBy = 1;
 				break;
 			case 2:
-				this.color = "blue";
+				this.color = "white";
 				this.gorwBy = 2;
 				break;
 			case 3:
-				this.color = "gold";
+				this.color = "white";
 				this.gorwBy = 3;
 				break;
 			}
