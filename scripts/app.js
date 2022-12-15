@@ -29,7 +29,7 @@ class Player {
 		this.ctx = ctx;
 
 		this.requestedDirection = "MOVE_DOWN";
-		this.currentDirection = "MOVE_UP";
+		this.currentDirection = "MOVE_DOWN";
 		this.head = new Segment(this.x, this.y, "purple", this.ctx);
 		/** @type {Array<Segment>} */
 		this.segments = [];
@@ -90,7 +90,7 @@ class Player {
 			this.segments[0].y = this.head.y;
 		}
 		
-		switch (this.currentDirection) {
+		switch (this.requestedDirection) {
 			case "MOVE_DOWN":
 				this.head.y += this.game.gridSize;
 				break;
@@ -144,11 +144,17 @@ class Player {
 			}
 		});
 	}
-	grow(gorwBy){
-		for(let i = 0; i < gorwBy; i ++){
-			this.segments.push(new Segment(this.head.x, this.head.y, "white", this.ctx,));
+	/**
+	 * @param {Food} food
+	 */
+	grow(food){
+		for(let i = 0; i < food.gorwBy; i ++){
+			this.segments.push(
+				new Segment(this.head.x, this.head.y, "this.food.color", this.ctx,)
+				);
 		}
-		this.sneakCount++;
+		this.sneakCount+= food.sneakAttempts;
+
 	}
 }
 class Segment {
@@ -185,29 +191,59 @@ class Food {
 		this.radius = game.gridSize / 2;
 		this.color = "red";
 		this.gorwBy = 1;
+		this.sneakAttempts = 0;
 		this.isEaten = true; 
 	}
-	spawn(){
+	/**
+	 * @param {Array<Player>} [players]
+	 * @param {Array<Food>} [food]
+	 */
+	spawn(players, food){
 		this.isEaten = false;
-		let foodType = Math.floor(Math.random()* 3 + 1);
+		let foodType = Math.floor(Math.random()* 10 + 1);
 		switch(foodType){
 			case 1:
-				this.color = "white";
-				this.gorwBy = 1;
+				this.color = "this.head.color";
+				this.gorwBy = 3;
+				this.sneakAttempts = 2;
 				break;
 			case 2:
-				this.color = "white";
-				this.gorwBy = 2;
-				break;
 			case 3:
-				this.color = "white";
-				this.gorwBy = 3;
+			case 4:
+				this.color = "teal";
+				this.gorwBy = 2;
+				this.sneakAttempts = 1;
+				break;
+			default:
+				this.color = "red";
+				this.gorwBy = 1;
+				this.sneakAttempts = 0;
 				break;
 			}
 		let xGridMaxValue = canvas.width / game.gridSize; 
 		let yGridMaxValue = canvas.height / game.gridSize; 
 		let randomx = Math.floor(Math.random() * xGridMaxValue);
 		let randomy = Math.floor(Math.random() * yGridMaxValue)
+		const MAX_TRIES = 10;
+		let tryCount = 1;
+		do{
+			let isOverLapping = false;
+			players?.forEach((p) => {
+				if(p.head.x == randomx && p.head.y == randomy) {
+					isOverLapping = true;
+				}
+				if(p.segments.some((s) => s.x == randomx && s.y == randomy)){
+					isOverLapping = true;
+				}
+			});
+			if(isOverLapping = false){
+				isOverLapping = food?.some((f)=> f.x == randomx && f.y == randomy);
+			}
+			}
+			if (isOverLapping = false){
+				tryCount = MAX_TRIES;
+			}
+		}while(tryCount < MAX_TRIES)
 		this.x = randomx * game.gridSize;
 		this.y = randomy * game.gridSize;
 	}
@@ -239,7 +275,7 @@ function CheckIfFoodIsComsumend(players, food){
 		players.forEach((p) => {
 			if(p.head.x == f.x && p.head.y == f.y){
 				f.isEaten = true;
-				p.grow(f.gorwBy);
+				p.grow(f);
 			}
 		});
 	});
